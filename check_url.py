@@ -10,7 +10,7 @@ import sys
 st.title('URL CHECKER')
 
 # Set limit for URLs to process
-LIMIT = 6
+LIMIT = 20
 
 # Function to check URL status using curl
 def check_url_status(url):
