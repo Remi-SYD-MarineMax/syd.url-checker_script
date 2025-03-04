@@ -18,4 +18,4 @@ streamlit run check_url.py
 
 # Screenshots
 
-![URL Checker Interface](/images/screenshot1.png "User Interface")
+![URL Checker Interface](/screenshots/screenshot1.png "User Interface")
