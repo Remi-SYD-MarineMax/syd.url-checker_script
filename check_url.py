@@ -2,6 +2,8 @@
 # RUN: streamlit run check_url.py
 
 import streamlit as st
+import tkinter as tk
+from tkinter import filedialog
 import pandas as pd
 import numpy as np
 import subprocess
@@ -29,6 +31,25 @@ def recheck_url(url):
             result["Last Checked"] = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
     st.rerun()
 
+
+
+def load_csv_from_file():
+    # Open file dialog to select CSV file
+    root = tk.Tk()
+    root.withdraw()  # Hide the main window
+    file_path = filedialog.askopenfilename(
+        title="Select CSV file",
+        filetypes=[("CSV files", "*.csv"), ("All files", "*.*")]
+    )
+    
+    if file_path:
+        try:
+            df = pd.read_csv(file_path)
+            return df
+        except Exception as e:
+            print(f"Error loading CSV file: {e}")
+            return None
+    return None
 
 
 def check_url_status(url):
@@ -90,12 +111,73 @@ def highlight_rows(row):
         return ['background-color: #ffe6e6'] * len(row)  # Light red
     return [''] * len(row)
 
+
+
+
+
 try:
-    # Read URLs from CSV (assuming URLs are in first column)
-    df = pd.read_csv('urls.csv')
-    urls = df.iloc[:, 0].tolist()  # Get first column as list
+    # Add file loading options
+    st.markdown("### Choose CSV File Source")
+    col1, col2 = st.columns(2)
+
+    with col1:
+        if st.button('Use Default File (urls.csv)'):
+            try:
+                df = pd.read_csv('urls.csv')
+                urls = df.iloc[:, 0].tolist()
+                total_urls = len(urls)
+                st.session_state['urls'] = urls
+                st.session_state['total_urls'] = total_urls
+                st.success(f"Successfully loaded {total_urls} URLs from default file")
+            except FileNotFoundError:
+                st.error("Error: urls.csv file not found. Please ensure the file exists in the same directory as this script.")
+                st.stop()
+
+    with col2:
+        uploaded_file = st.file_uploader("Choose a CSV file", type=['csv'])
+        if uploaded_file is not None:
+            try:
+                df = pd.read_csv(uploaded_file)
+                urls = df.iloc[:, 0].tolist()
+                total_urls = len(urls)
+                st.session_state['urls'] = urls
+                st.session_state['total_urls'] = total_urls
+                st.success(f"Successfully loaded {total_urls} URLs from uploaded file")
+            except Exception as e:
+                st.error(f"Error loading CSV file: {e}")
+                st.stop()
+
+    # Check if URLs are loaded
+    if 'urls' not in st.session_state:
+        st.info("Please select a file source to begin")
+        st.stop()
+
+    # Continue with your existing code
+    urls = st.session_state['urls']
+    total_urls = st.session_state['total_urls']
     
-    total_urls = len(urls)
+    # # Apply the styling
+    # styled_df = df.style.apply(style_row, axis=1)
+    
+    # # Continue with your existing processing...
+
+    # # Read URLs from CSV (assuming URLs are in first column)
+    # df = pd.read_csv('urls.csv')
+    # urls = df.iloc[:, 0].tolist()  # Get first column as list
+    
+    # total_urls = len(urls)
+    # st.text(f"Total URLs found in CSV: {total_urls}")
+
+    # # Check if URLs are loaded
+    # if 'urls' not in st.session_state:
+    #     st.info("Please select a file source to begin")
+    #     st.stop()
+
+    # # Continue with your existing code, but replace the initial URL loading with:
+    # urls = st.session_state['urls']
+    # total_urls = st.session_state['total_urls']
+
+    # Then continue with your existing code for displaying total URLs and processing
     st.text(f"Total URLs found in CSV: {total_urls}")
 
     # Add explanation message

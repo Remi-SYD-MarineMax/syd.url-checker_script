@@ -6,6 +6,11 @@ You need to have the following packages install to run the app
 - Python
 - Streamlit (https://streamlit.io/#install)
 
+# Create a simple EXE file
+nativefier --name '<you .exe name>' '<your streamlit sharing website url>' --platform <'windows' or 'mac' or 'linux'>
+
+nativefier --name 'check_url' 'http://localhost:8502/' --platform 'mac'
+
 
 # Run
 ```
