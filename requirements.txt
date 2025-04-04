@@ -2,6 +2,3 @@ streamlit
 pandas
 numpy
 tkinter
-subprocess
-sys
-datetime
